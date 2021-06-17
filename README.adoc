@@ -1,0 +1,71 @@
+= Gravitee.io HTTP Authentication Provider
+
+ifdef::env-github[]
+image:https://ci.gravitee.io/buildStatus/icon?job=gravitee-io/gravitee-resource-auth-provider-http/master["Build status", link="https://ci.gravitee.io/job/gravitee-io/job/gravitee-resource-oauth2-provider-am/"]
+image:https://badges.gitter.im/Join Chat.svg["Gitter", link="https://gitter.im/gravitee-io/gravitee-resource-auth-provider-http?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"]
+endif::[]
+
+== Description
+
+Gravitee.io HTTP Authentication Provider resource is used to validate user's credentials against an HTTP server.
+
+== Configuration
+
+You can configure the resource with the following options :
+
+|===
+|Property |Required |Description |Type |Default
+
+.^|method
+^.^|X
+|HTTP method to invoke the endpoint.
+^.^|string
+^.^|POST
+
+.^|useSystemProxy
+^.^|-
+|Use the system proxy configured by your administrator
+^.^|boolean
+^.^|false
+
+.^|url
+^.^|X
+|The server url
+^.^|string
+^.^|-
+
+.^|headers
+^.^|-
+|Request HTTP headers
+^.^| -
+^.^| -
+
+.^|body
+^.^|-
+|Request body
+^.^|string
+^.^|-
+
+.^|condition
+^.^|X
+|The condition which will be verified to validate that the authentication is successful (support EL).
+^.^|string
+^.^|{#authResponse.status == 200}
+
+|===
+
+
+[source, json]
+.Configuration example
+----
+{
+    "configuration": {
+        "method": "POST",
+        "useSystemProxy": false,
+        "url": "https://auth-server",
+        "headers": [],
+        "body": "",
+        "condition": "{#authResponse.status == 200}"
+    }
+}
+----

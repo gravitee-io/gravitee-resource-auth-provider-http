@@ -1,0 +1,78 @@
+{
+  "type" : "object",
+  "id" : "urn:jsonschema:io:gravitee:resource:authprovider:http:HttpIdentityProviderConfiguration",
+  "properties" : {
+    "method" : {
+      "title": "HTTP Method",
+      "description": "HTTP method to invoke the endpoint.",
+      "type" : "string",
+      "default": "POST",
+      "enum" : [ "GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "CONNECT", "OPTIONS", "TRACE" ]
+    },
+    "useSystemProxy": {
+      "title": "Use system proxy",
+      "description": "Use the system proxy configured by your administrator.",
+      "type": "boolean"
+    },
+    "url": {
+      "title": "URL",
+      "description": "Server url",
+      "type" : "string"
+    },
+    "headers" : {
+      "type" : "array",
+      "title": "Request Headers",
+      "items" : {
+        "type" : "object",
+        "id" : "urn:jsonschema:io:gravitee:resource:authprovider:http:configuration:HttpHeader",
+        "title": "Header",
+        "properties" : {
+          "name" : {
+            "title": "Name",
+            "type" : "string"
+          },
+          "value" : {
+            "title": "Value (support EL)",
+            "type" : "string",
+            "x-schema-form": {
+              "expression-language": true
+            }
+          }
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ]
+    },
+    "body" : {
+      "title": "Request body (support EL)",
+      "type" : "string",
+      "x-schema-form": {
+        "type": "codemirror",
+        "codemirrorOptions": {
+          "placeholder": "Put request body here",
+          "lineWrapping": true,
+          "lineNumbers": true,
+          "allowDropFileTypes": true,
+          "autoCloseTags": true
+        },
+        "expression-language": true
+      }
+    },
+    "condition": {
+      "title": "Authentication condition",
+      "description": "The condition which will be verified to validate that the authentication is successful (support EL).",
+      "default": "{#authResponse.status == 200}",
+      "type" : "string",
+      "x-schema-form": {
+        "expression-language": true
+      }
+    }
+  },
+  "required": [
+    "method",
+    "url",
+    "condition"
+  ]
+}
