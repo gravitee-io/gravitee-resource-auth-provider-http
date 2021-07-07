@@ -30,7 +30,7 @@
     <groupId>io.gravitee.resource</groupId>
     <artifactId>gravitee-resource-auth-provider-http</artifactId>
     <description>Gravitee.io HTTP Authentication Provider resource is used to validate user's credentials against an HTTP server.</description>
-    <version>1.1.0</version>
+    <version>1.2.0-SNAPSHOT</version>
 
     <name>Gravitee.io APIM - Resource - Auth Provider - HTTP</name>
 
