@@ -24,66 +24,65 @@ import java.util.List;
  * @author David BRASSELY (david.brassely at graviteesource.com)
  * @author GraviteeSource Team
  */
-public class HttpAuthenticationProviderResourceConfiguration
-  implements ResourceConfiguration {
+public class HttpAuthenticationProviderResourceConfiguration implements ResourceConfiguration {
 
-  private String url;
+    private String url;
 
-  private List<HttpHeader> headers = new ArrayList<>();
+    private List<HttpHeader> headers = new ArrayList<>();
 
-  private String body;
+    private String body;
 
-  private HttpMethod method;
+    private HttpMethod method;
 
-  private String condition;
+    private String condition;
 
-  private boolean useSystemProxy;
+    private boolean useSystemProxy;
 
-  public boolean isUseSystemProxy() {
-    return useSystemProxy;
-  }
+    public boolean isUseSystemProxy() {
+        return useSystemProxy;
+    }
 
-  public void setUseSystemProxy(boolean useSystemProxy) {
-    this.useSystemProxy = useSystemProxy;
-  }
+    public void setUseSystemProxy(boolean useSystemProxy) {
+        this.useSystemProxy = useSystemProxy;
+    }
 
-  public String getUrl() {
-    return url;
-  }
+    public String getUrl() {
+        return url;
+    }
 
-  public void setUrl(String url) {
-    this.url = url;
-  }
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-  public List<HttpHeader> getHeaders() {
-    return headers;
-  }
+    public List<HttpHeader> getHeaders() {
+        return headers;
+    }
 
-  public void setHeaders(List<HttpHeader> headers) {
-    this.headers = headers;
-  }
+    public void setHeaders(List<HttpHeader> headers) {
+        this.headers = headers;
+    }
 
-  public String getBody() {
-    return body;
-  }
+    public String getBody() {
+        return body;
+    }
 
-  public void setBody(String body) {
-    this.body = body;
-  }
+    public void setBody(String body) {
+        this.body = body;
+    }
 
-  public HttpMethod getMethod() {
-    return method;
-  }
+    public HttpMethod getMethod() {
+        return method;
+    }
 
-  public void setMethod(HttpMethod method) {
-    this.method = method;
-  }
+    public void setMethod(HttpMethod method) {
+        this.method = method;
+    }
 
-  public String getCondition() {
-    return condition;
-  }
+    public String getCondition() {
+        return condition;
+    }
 
-  public void setCondition(String condition) {
-    this.condition = condition;
-  }
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
 }
