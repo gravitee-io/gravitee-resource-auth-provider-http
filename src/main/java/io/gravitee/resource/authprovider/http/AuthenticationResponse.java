@@ -24,36 +24,27 @@ import io.vertx.core.http.HttpClientResponse;
  */
 public class AuthenticationResponse {
 
-  private final HttpClientResponse response;
-  private final String content;
-  private final HttpHeaders headers;
+    private final HttpClientResponse response;
+    private final String content;
+    private final HttpHeaders headers;
 
-  AuthenticationResponse(
-    final HttpClientResponse response,
-    final String content
-  ) {
-    this.response = response;
-    this.content = content;
-    this.headers = new HttpHeaders(response.headers().size());
+    AuthenticationResponse(final HttpClientResponse response, final String content) {
+        this.response = response;
+        this.content = content;
+        this.headers = new HttpHeaders(response.headers().size());
 
-    response
-      .headers()
-      .names()
-      .forEach(
-        headerName ->
-          this.headers.put(headerName, response.headers().getAll(headerName))
-      );
-  }
+        response.headers().names().forEach(headerName -> this.headers.put(headerName, response.headers().getAll(headerName)));
+    }
 
-  public int getStatus() {
-    return response.statusCode();
-  }
+    public int getStatus() {
+        return response.statusCode();
+    }
 
-  public HttpHeaders getHeaders() {
-    return headers;
-  }
+    public HttpHeaders getHeaders() {
+        return headers;
+    }
 
-  public String getContent() {
-    return content;
-  }
+    public String getContent() {
+        return content;
+    }
 }
