@@ -15,7 +15,6 @@
  */
 package io.gravitee.resource.authprovider.http;
 
-import io.gravitee.common.http.HttpHeaders;
 import io.gravitee.common.utils.UUID;
 import io.gravitee.el.TemplateEngine;
 import io.gravitee.gateway.api.ExecutionContext;
@@ -26,6 +25,7 @@ import io.gravitee.resource.authprovider.api.Authentication;
 import io.gravitee.resource.authprovider.api.AuthenticationProviderResource;
 import io.gravitee.resource.authprovider.http.configuration.HttpAuthenticationProviderResourceConfiguration;
 import io.vertx.core.Context;
+import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.*;
@@ -113,69 +113,86 @@ public class HttpAuthenticationProviderResource
 
         logger.debug("Authenticate user requesting {}", configuration().getUrl());
 
-        HttpClientRequest request = httpClient
-            .requestAbs(convert(configuration().getMethod()), configuration().getUrl())
-            .handler(
-                new io.vertx.core.Handler<HttpClientResponse>() {
-                    @Override
-                    public void handle(HttpClientResponse httpResponse) {
-                        httpResponse.bodyHandler(
-                            new io.vertx.core.Handler<Buffer>() {
-                                @Override
-                                public void handle(Buffer body) {
-                                    TemplateEngine tplEngine = context.getTemplateEngine();
+        RequestOptions requestOpts = new RequestOptions()
+            .setAbsoluteURI(configuration().getUrl())
+            .setMethod(convert(configuration().getMethod()));
 
-                                    // Put response into template variable for EL
-                                    tplEngine
-                                        .getTemplateContext()
-                                        .setVariable(TEMPLATE_VARIABLE, new AuthenticationResponse(httpResponse, body.toString()));
+        final Future<HttpClientRequest> futureRequest = httpClient.request(requestOpts);
+        futureRequest.onFailure(throwable -> handleFailure(handler, throwable));
 
-                                    boolean success = tplEngine.getValue(configuration().getCondition(), Boolean.class);
+        futureRequest.onSuccess(httpClientRequest -> {
+            // Connection is made, lets continue.
+            final Future<HttpClientResponse> futureResponse;
 
-                                    if (success) {
-                                        handler.handle(new Authentication(username));
-                                    } else {
-                                        handler.handle(null);
-                                    }
-                                }
+            context.getTemplateEngine().getTemplateContext().setVariable("username", username);
+            context.getTemplateEngine().getTemplateContext().setVariable("password", password);
+
+            httpClientRequest.setTimeout(30000L);
+            httpClientRequest.headers().add(HttpHeaders.USER_AGENT, userAgent);
+            httpClientRequest.headers().add("X-Gravitee-Request-Id", UUID.toString(UUID.random()));
+
+            // Merge headers with those from configuration and apply templating
+            if (configuration().getHeaders() != null) {
+                configuration()
+                    .getHeaders()
+                    .forEach(header -> {
+                        try {
+                            String extValue = (header.getValue() != null) ? context.getTemplateEngine().convert(header.getValue()) : null;
+                            if (extValue != null) {
+                                httpClientRequest.putHeader(header.getName(), extValue);
                             }
-                        );
-                    }
-                }
-            )
-            .exceptionHandler(
-                new io.vertx.core.Handler<Throwable>() {
-                    @Override
-                    public void handle(Throwable throwable) {
-                        handler.handle(null);
-                    }
-                }
-            );
+                        } catch (Exception ex) {
+                            // Do nothing
+                        }
+                    });
+            }
 
-        request.setTimeout(30000L);
-        request.headers().add(HttpHeaders.USER_AGENT, userAgent);
-        request.headers().add("X-Gravitee-Request-Id", UUID.toString(UUID.random()));
+            String body = null;
 
-        context.getTemplateEngine().getTemplateContext().setVariable("username", username);
-        context.getTemplateEngine().getTemplateContext().setVariable("password", password);
+            if (configuration().getBody() != null && !configuration().getBody().isEmpty()) {
+                // Body can be dynamically resolved using el expression.
+                body = context.getTemplateEngine().getValue(configuration().getBody(), String.class);
+            }
 
-        // Merge headers with those from configuration and apply templating
-        if (configuration().getHeaders() != null && !configuration().getHeaders().isEmpty()) {
-            configuration()
-                .getHeaders()
-                .forEach(header ->
-                    request.headers().add(header.getName(), context.getTemplateEngine().getValue(header.getValue(), String.class))
-                );
-        }
+            // Check the resolved body before trying to send it.
+            if (body != null && !body.isEmpty()) {
+                httpClientRequest.headers().remove(HttpHeaders.TRANSFER_ENCODING);
+                httpClientRequest.putHeader(HttpHeaders.CONTENT_LENGTH, Integer.toString(body.length()));
+                futureResponse = httpClientRequest.send(Buffer.buffer(body));
+            } else {
+                futureResponse = httpClientRequest.send();
+            }
 
-        if (configuration().getBody() != null && !configuration().getBody().isEmpty()) {
-            String body = context.getTemplateEngine().getValue(configuration().getBody(), String.class);
-            request.headers().remove(io.vertx.core.http.HttpHeaders.TRANSFER_ENCODING);
-            request.putHeader(io.vertx.core.http.HttpHeaders.CONTENT_LENGTH, Integer.toString(body.length()));
-            request.end(Buffer.buffer(body));
-        } else {
-            request.end();
-        }
+            futureResponse
+                .onSuccess(httpResponse -> handleSuccess(context, handler, username, httpResponse))
+                .onFailure(throwable -> handleFailure(handler, throwable));
+        });
+    }
+
+    private void handleSuccess(
+        ExecutionContext context,
+        Handler<Authentication> handler,
+        String username,
+        HttpClientResponse httpResponse
+    ) {
+        httpResponse.bodyHandler(body -> {
+            TemplateEngine tplEngine = context.getTemplateEngine();
+
+            // Put response into template variable for EL
+            tplEngine.getTemplateContext().setVariable(TEMPLATE_VARIABLE, new AuthenticationResponse(httpResponse, body.toString()));
+
+            boolean success = tplEngine.getValue(configuration().getCondition(), Boolean.class);
+
+            if (success) {
+                handler.handle(new Authentication(username));
+            } else {
+                handler.handle(null);
+            }
+        });
+    }
+
+    private void handleFailure(Handler<Authentication> handler, Throwable throwable) {
+        handler.handle(null);
     }
 
     private ProxyOptions getSystemProxyOptions() {
@@ -245,7 +262,7 @@ public class HttpAuthenticationProviderResource
             case TRACE:
                 return HttpMethod.TRACE;
             case OTHER:
-                return HttpMethod.OTHER;
+                return HttpMethod.valueOf("OTHER");
         }
 
         return null;
