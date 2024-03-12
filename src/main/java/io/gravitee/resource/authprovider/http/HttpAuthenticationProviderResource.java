@@ -17,6 +17,7 @@ package io.gravitee.resource.authprovider.http;
 
 import io.gravitee.common.utils.UUID;
 import io.gravitee.el.TemplateEngine;
+import io.gravitee.el.exceptions.ExpressionEvaluationException;
 import io.gravitee.gateway.api.ExecutionContext;
 import io.gravitee.gateway.api.handler.Handler;
 import io.gravitee.node.api.Node;
@@ -181,11 +182,15 @@ public class HttpAuthenticationProviderResource
             // Put response into template variable for EL
             tplEngine.getTemplateContext().setVariable(TEMPLATE_VARIABLE, new AuthenticationResponse(httpResponse, body.toString()));
 
-            boolean success = tplEngine.getValue(configuration().getCondition(), Boolean.class);
-
-            if (success) {
-                handler.handle(new Authentication(username));
-            } else {
+            try {
+                boolean success = tplEngine.getValue(configuration().getCondition(), Boolean.class);
+                if (success) {
+                    handler.handle(new Authentication(username));
+                } else {
+                    handler.handle(null);
+                }
+            } catch (ExpressionEvaluationException e) {
+                logger.warn(e.getMessage());
                 handler.handle(null);
             }
         });
