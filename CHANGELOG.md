@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/gravitee-io/gravitee-resource-auth-provider-http/compare/1.3.1...1.3.2) (2024-04-02)
+
+
+### Bug Fixes
+
+* catch ExpressionEvaluationException when using EL ([93cbe4f](https://github.com/gravitee-io/gravitee-resource-auth-provider-http/commit/93cbe4f1d262d2f718ef7ee7801dadd332d9b04f))
+
 ## [1.3.1](https://github.com/gravitee-io/gravitee-resource-auth-provider-http/compare/1.3.0...1.3.1) (2024-03-27)
 
 
