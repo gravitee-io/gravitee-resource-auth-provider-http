@@ -142,7 +142,7 @@ public class HttpAuthenticationProviderResource
                             if (extValue != null) {
                                 httpClientRequest.putHeader(header.getName(), extValue);
                             }
-                        } catch (Exception ex) {
+                        } catch (ExpressionEvaluationException ex) {
                             // Do nothing
                         }
                     });
@@ -151,8 +151,12 @@ public class HttpAuthenticationProviderResource
             String body = null;
 
             if (configuration().getBody() != null && !configuration().getBody().isEmpty()) {
-                // Body can be dynamically resolved using el expression.
-                body = context.getTemplateEngine().getValue(configuration().getBody(), String.class);
+                try {
+                    // Body can be dynamically resolved using el expression.
+                    body = context.getTemplateEngine().getValue(configuration().getBody(), String.class);
+                } catch (ExpressionEvaluationException ex) {
+                    // Do nothing
+                }
             }
 
             // Check the resolved body before trying to send it.
