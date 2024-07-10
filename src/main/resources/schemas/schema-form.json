@@ -1,13 +1,23 @@
 {
-  "type" : "object",
-  "id" : "urn:jsonschema:io:gravitee:resource:authprovider:http:HttpIdentityProviderConfiguration",
-  "properties" : {
-    "method" : {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "method": {
       "title": "HTTP Method",
       "description": "HTTP method to invoke the endpoint.",
-      "type" : "string",
+      "type": "string",
       "default": "POST",
-      "enum" : [ "GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "CONNECT", "OPTIONS", "TRACE" ]
+      "enum": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "PATCH",
+        "HEAD",
+        "CONNECT",
+        "OPTIONS",
+        "TRACE"
+      ]
     },
     "useSystemProxy": {
       "title": "Use system proxy",
@@ -17,23 +27,23 @@
     "url": {
       "title": "URL",
       "description": "Server url",
-      "type" : "string"
+      "type": "string"
     },
-    "headers" : {
-      "type" : "array",
+    "headers": {
+      "type": "array",
       "title": "Request Headers",
-      "items" : {
-        "type" : "object",
-        "id" : "urn:jsonschema:io:gravitee:resource:authprovider:http:configuration:HttpHeader",
+      "description": "Header value support EL",
+      "items": {
+        "type": "object",
         "title": "Header",
-        "properties" : {
-          "name" : {
+        "properties": {
+          "name": {
             "title": "Name",
-            "type" : "string"
+            "type": "string"
           },
-          "value" : {
+          "value": {
             "title": "Value (support EL)",
-            "type" : "string",
+            "type": "string",
             "x-schema-form": {
               "expression-language": true
             }
@@ -43,11 +53,15 @@
       "required": [
         "name",
         "value"
-      ]
+      ],
+      "gioConfig": {
+        "uiType": "gio-headers-array"
+      }
     },
-    "body" : {
+    "body": {
       "title": "Request body (support EL)",
-      "type" : "string",
+      "type": "string",
+      "format": "gio-code-editor",
       "x-schema-form": {
         "type": "codemirror",
         "codemirrorOptions": {
@@ -64,7 +78,7 @@
       "title": "Authentication condition",
       "description": "The condition which will be verified to validate that the authentication is successful (support EL).",
       "default": "{#authResponse.status == 200}",
-      "type" : "string",
+      "type": "string",
       "x-schema-form": {
         "expression-language": true
       }
