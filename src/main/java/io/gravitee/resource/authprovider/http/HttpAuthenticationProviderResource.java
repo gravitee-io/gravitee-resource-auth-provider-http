@@ -128,7 +128,7 @@ public class HttpAuthenticationProviderResource
             context.getTemplateEngine().getTemplateContext().setVariable("username", username);
             context.getTemplateEngine().getTemplateContext().setVariable("password", password);
 
-            httpClientRequest.setTimeout(30000L);
+            httpClientRequest.idleTimeout(30000L);
             httpClientRequest.headers().add(HttpHeaders.USER_AGENT, userAgent);
             httpClientRequest.headers().add("X-Gravitee-Request-Id", UUID.toString(UUID.random()));
 
