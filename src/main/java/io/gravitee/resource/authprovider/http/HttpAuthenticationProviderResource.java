@@ -1,11 +1,11 @@
-/**
- * Copyright (C) 2015 The Gravitee team (http://gravitee.io)
+/*
+ * Copyright © 2015 The Gravitee team (http://gravitee.io)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,8 +36,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.CustomLog;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -47,11 +46,10 @@ import org.springframework.core.env.Environment;
  * @author David BRASSELY (david.brassely at graviteesource.com)
  * @author GraviteeSource Team
  */
+@CustomLog
 public class HttpAuthenticationProviderResource
     extends AuthenticationProviderResource<HttpAuthenticationProviderResourceConfiguration>
     implements ApplicationContextAware {
-
-    private final Logger logger = LoggerFactory.getLogger(HttpAuthenticationProviderResource.class);
 
     private static final String HTTPS_SCHEME = "https";
 
@@ -103,7 +101,7 @@ public class HttpAuthenticationProviderResource
                 try {
                     httpClient.close();
                 } catch (IllegalStateException ise) {
-                    logger.warn(ise.getMessage());
+                    log.warn(ise.getMessage());
                 }
             });
     }
@@ -112,7 +110,7 @@ public class HttpAuthenticationProviderResource
     public void authenticate(String username, String password, ExecutionContext context, Handler<Authentication> handler) {
         HttpClient httpClient = httpClients.computeIfAbsent(Vertx.currentContext(), __ -> vertx.createHttpClient(httpClientOptions));
 
-        logger.debug("Authenticate user requesting {}", configuration().getUrl());
+        log.debug("Authenticate user requesting {}", configuration().getUrl());
 
         RequestOptions requestOpts = new RequestOptions()
             .setAbsoluteURI(configuration().getUrl())
@@ -194,7 +192,7 @@ public class HttpAuthenticationProviderResource
                     handler.handle(null);
                 }
             } catch (ExpressionEvaluationException e) {
-                logger.warn(e.getMessage());
+                log.warn(e.getMessage());
                 handler.handle(null);
             }
         });
@@ -235,12 +233,12 @@ public class HttpAuthenticationProviderResource
         if (errors.length() == 0) {
             return proxyOptions;
         } else {
-            logger.warn(
+            log.warn(
                 "HTTP authentication provider requires a system proxy to be defined to call [{}] but some configurations are missing or not well defined: {}",
                 configuration().getUrl(),
                 errors
             );
-            logger.warn("Ignoring system proxy");
+            log.warn("Ignoring system proxy");
             return null;
         }
     }
