@@ -1,3 +1,21 @@
+# [2.0.0](https://github.com/gravitee-io/gravitee-resource-auth-provider-http/compare/1.4.0...2.0.0) (2026-06-17)
+
+
+### Bug Fixes
+
+* bump gravitee-parent (prettier and node logging) ([140cdc7](https://github.com/gravitee-io/gravitee-resource-auth-provider-http/commit/140cdc7cc9b47c5e75a3eb6dd6061a1a08ef4348))
+* update circle config with updated gravitee orb ([c980298](https://github.com/gravitee-io/gravitee-resource-auth-provider-http/commit/c9802980953fd39419a2e6346952664534f83992))
+
+
+### Features
+
+* upgrade to Vertx 5 ([eea353e](https://github.com/gravitee-io/gravitee-resource-auth-provider-http/commit/eea353e02894e62b409a95f51a13dbdaaa631546))
+
+
+### BREAKING CHANGES
+
+* upgrade to vertx 5.x
+
 # [1.4.0](https://github.com/gravitee-io/gravitee-resource-auth-provider-http/compare/1.3.2...1.4.0) (2024-07-11)
 
 
