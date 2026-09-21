@@ -12,12 +12,17 @@ endif::[]
 
 Gravitee.io HTTP Authentication Provider resource is used to validate user's credentials against an HTTP server.
 
-== Compatibility with APIM
+== Compatibility matrix
 
 |===
-| Plugin version | APIM version
-| 2.x            | 4.12.x and above
+| Plugin version  | APIM             | Java version
+
+| 2.x             | 4.12.x and above | 21
+| 1.5.x and upper | 4.9.x to 4.11.x  | 21
+| 1.0.x to 1.4.x  | 4.7.x to 4.11.x  | 11
 |===
+
+The *Java version* column is the bytecode level of the latest release of each line, which sets the minimum runtime able to load the artifact.
 
 == Configuration
 
