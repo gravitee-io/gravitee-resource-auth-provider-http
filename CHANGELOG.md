@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/gravitee-io/gravitee-resource-auth-provider-http/compare/1.4.0...1.5.0) (2026-09-22)
+
+
+### Features
+
+* build against the JDK 21 line ([fe25cfe](https://github.com/gravitee-io/gravitee-resource-auth-provider-http/commit/fe25cfeefaec666cf11b27c37798b2b6953a1014))
+
 # [1.4.0](https://github.com/gravitee-io/gravitee-resource-auth-provider-http/compare/1.3.2...1.4.0) (2024-07-11)
 
 
