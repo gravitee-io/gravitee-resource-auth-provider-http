@@ -33,9 +33,9 @@ import io.vertx.core.http.*;
 import io.vertx.core.net.ProxyOptions;
 import io.vertx.core.net.ProxyType;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.CustomLog;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -55,7 +55,7 @@ public class HttpAuthenticationProviderResource
 
     private Vertx vertx;
 
-    private final Map<Context, HttpClient> httpClients = new HashMap<>();
+    private final Map<Context, HttpClient> httpClients = new ConcurrentHashMap<>();
 
     private HttpClientOptions httpClientOptions;
 
