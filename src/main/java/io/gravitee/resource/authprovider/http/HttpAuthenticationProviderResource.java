@@ -108,7 +108,7 @@ public class HttpAuthenticationProviderResource
 
     @Override
     public void authenticate(String username, String password, ExecutionContext context, Handler<Authentication> handler) {
-        HttpClient httpClient = httpClients.computeIfAbsent(Vertx.currentContext(), __ -> vertx.createHttpClient(httpClientOptions));
+        HttpClient httpClient = httpClients.computeIfAbsent(Vertx.currentContext(), __ -> createHttpClient());
 
         log.debug("Authenticate user requesting {}", configuration().getUrl());
 
@@ -170,6 +170,20 @@ public class HttpAuthenticationProviderResource
                 .onSuccess(httpResponse -> handleSuccess(context, handler, username, httpResponse))
                 .onFailure(throwable -> handleFailure(handler, throwable));
         });
+    }
+
+    /**
+     * Clients are created as Vert.x shared clients, each under its own name so that they never share a pool: Vert.x 5.0
+     * keeps a non-shared client registered on the close future of the context that created it even after {@code close()},
+     * so the clients of every redeployed resource pile up until the node stops. A shared client is registered through a
+     * nested close future that unregisters itself on close.
+     * <p>
+     * Fixed upstream in Vert.x 5.2: go back to plain non-shared clients when upgrading.
+     */
+    private HttpClient createHttpClient() {
+        return vertx.createHttpClient(
+            new HttpClientOptions(httpClientOptions).setShared(true).setName("auth-provider-http-" + UUID.toString(UUID.random()))
+        );
     }
 
     private void handleSuccess(
