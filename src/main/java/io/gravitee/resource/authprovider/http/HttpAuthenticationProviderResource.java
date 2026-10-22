@@ -53,11 +53,13 @@ public class HttpAuthenticationProviderResource
 
     private static final String HTTPS_SCHEME = "https";
 
-    private Vertx vertx;
+    // Written once in doStart(), read from every event loop that serves a request.
+    private volatile Vertx vertx;
 
     private final Map<Context, HttpClient> httpClients = new ConcurrentHashMap<>();
 
-    private HttpClientOptions httpClientOptions;
+    // Written once in doStart(), read from every event loop that serves a request.
+    private volatile HttpClientOptions httpClientOptions;
 
     private ApplicationContext applicationContext;
 
