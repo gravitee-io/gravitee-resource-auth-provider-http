@@ -1,3 +1,12 @@
+## [2.0.1](https://github.com/gravitee-io/gravitee-resource-auth-provider-http/compare/2.0.0...2.0.1) (2026-10-22)
+
+
+### Bug Fixes
+
+* make the per-context http client map safe for concurrent event loops ([a6c7897](https://github.com/gravitee-io/gravitee-resource-auth-provider-http/commit/a6c7897fc1ba5f2d6cfbf1f95cb94ca4de8c3154))
+* publish the resource options safely to the event loops ([59d3336](https://github.com/gravitee-io/gravitee-resource-auth-provider-http/commit/59d3336707a99ae3921385bde1c8534e0112405d))
+* release closed http clients by creating them as uniquely named shared clients ([b8c19d2](https://github.com/gravitee-io/gravitee-resource-auth-provider-http/commit/b8c19d24dcfc00b5745c57244efd7ee509a40ce9))
+
 # [2.0.0](https://github.com/gravitee-io/gravitee-resource-auth-provider-http/compare/1.4.0...2.0.0) (2026-06-17)
 
 
